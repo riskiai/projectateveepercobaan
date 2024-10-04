@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
-use App\Models\ContactType;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -16,14 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        $roles = ['Admin', 'User'];
+        // Buat roles
+        $roles = ['Admin', 'User', 'Admin Master'];
 
         foreach ($roles as $role) {
             Role::create([
@@ -31,15 +22,24 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        // Buat Admin biasa
         User::factory()->create([
             'email' => 'admin@mailinator.com',
-            'role_id' => Role::ADMIN
+            'role_id' => Role::ADMIN,
+            'name' => 'Admin'
+        ]);
+
+        // Buat Admin Master
+        User::factory()->create([
+            'email' => 'adminmaster@mailinator.com',
+            'role_id' => Role::ADMIN_MASTER,
+            'name' => 'Admin Master'
         ]);
 
         $this->call([
             PurchaseCategorySeeder::class,
             PurchaseStatusSeeder::class,
-            ContactTypeSeeder::class
+            ContactTypeSeeder::class,
         ]);
     }
 }

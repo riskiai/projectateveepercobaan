@@ -26,7 +26,6 @@ class CompanySeeder extends Seeder
                 'account_number' => '1234567890',
                 'swift_code' => 'CENAIDJA',
             ],
-            // Tambahkan data lainnya (9 data lagi)
             [
                 'contact_type_id' => 3,
                 'name' => 'PT DEF',
@@ -43,7 +42,23 @@ class CompanySeeder extends Seeder
                 'account_number' => '9876543210',
                 'swift_code' => 'BMRIIDJA',
             ],
-            // Tambahkan data lainnya hingga 10 data.
+            [
+                'contact_type_id' => 1,
+                'name' => 'PT GHI',
+                'address' => 'Jl. Sudirman No. 3',
+                'npwp' => '567890123456789',
+                'pic_name' => 'Jake Smith',
+                'phone' => '081212345678',
+                'email' => 'jake@ghi.com',
+                'file' => 'file3.pdf',
+                'bank_name' => 'BNI',
+                'branch' => 'Bandung',
+                'account_name' => 'PT GHI',
+                'currency' => 'IDR',
+                'account_number' => '3456789012',
+                'swift_code' => 'BNINIDJA',
+            ],
+           
         ]);
     }
 }
