@@ -31,7 +31,7 @@ class ProjectCollection extends ResourceCollection
                 'billing' => $project->billing,
                 'cost_estimate' => $project->cost_estimate,
                 'margin' => $project->margin,
-                'percent' => round($project->percent, 2),
+                'percent' => $this->formatPercent($project->percent),
                 'file_attachment' => [
                     'name' => date('Y', strtotime($project->created_at)) . '/' . $project->id . '.' . pathinfo($project->file, PATHINFO_EXTENSION),
                     'link' => asset("storage/$project->file")
@@ -53,6 +53,24 @@ class ProjectCollection extends ResourceCollection
         return $data;
     }
 
+    /**
+     * Format percent by removing "%" and rounding the value.
+     *
+     * @param string|int|float $percent
+     * @return float
+     */
+    protected function formatPercent($percent): float
+    {
+        // Remove "%" if present and convert to float before rounding
+        return round(floatval(str_replace('%', '', $percent)), 2);
+    }
+
+    /**
+     * Get the status of the project.
+     *
+     * @param int $status
+     * @return array
+     */
     protected function getStatus($status)
     {
         $data = [
@@ -77,6 +95,12 @@ class ProjectCollection extends ResourceCollection
         return $data;
     }
 
+    /**
+     * Calculate the cost progress and determine the project status.
+     *
+     * @param Project $project
+     * @return array
+     */
     protected function costProgress($project)
     {
         $status = Project::STATUS_OPEN;
@@ -88,14 +112,14 @@ class ProjectCollection extends ResourceCollection
             $total += $purchase->sub_total;
         }
 
-         // Cek apakah cost_estimate lebih besar dari nol sebelum melakukan pembagian
+        // Check if cost_estimate is greater than zero before dividing
         if ($project->cost_estimate > 0) {
             $costEstimate = round(($total / $project->cost_estimate) * 100, 2);
         } else {
-            // Jika cost_estimate bernilai nol, tentukan nilai default
+            // Default value if cost_estimate is zero
             $costEstimate = 0;
         }
-        
+
         if ($costEstimate > 90) {
             $status = Project::STATUS_NEED_TO_CHECK;
         }
@@ -104,12 +128,11 @@ class ProjectCollection extends ResourceCollection
             $status = Project::STATUS_CLOSED;
         }
 
-        // Simpan nilai status cost progress ke dalam model Project
+        // Update the project status in the database
         $project->update(['status_cost_progress' => $status]);
 
         return [
             'status_cost_progress' => $status,
-            // 'status' => $status,
             'percent' => $costEstimate . '%',
             'real_cost' => $total
         ];
